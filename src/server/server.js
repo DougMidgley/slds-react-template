@@ -1,4 +1,9 @@
-const fastify = require('fastify')({ logger: true });
+
+
+const mode = process.env.NODE_ENV;
+console.log("production", mode);
+
+const fastify = require('fastify')({ logger: mode != "production" });
 
 const path = require('path');
 // serves static assets from the `src/ui` folder
@@ -25,7 +30,7 @@ fastify.route({
     }
   },
   // this function is executed for every request before the handler is executed
-  beforeHandler: async (request, reply) => {
+  preHandler: async (request, reply) => {
     // E.g. check authentication
   },
   handler: async (request, reply) => {

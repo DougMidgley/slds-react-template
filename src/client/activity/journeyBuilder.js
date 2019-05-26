@@ -2,7 +2,7 @@
 import Postmonger from 'postmonger';
 const connection = new Postmonger.Session();
 
-module.exports = {
+export default {
   init: function(callback){
     callback((prevState, props) => {
       prevState.journey = {};
