@@ -96,7 +96,7 @@
         }
     },
     "edit": {
-        "url": "{{EndPoint}}/activity/#/",
+        "url": "{{EndPoint}}/#/Activity",
         "height": 500,
         "width": 800
     },
@@ -106,10 +106,10 @@
             "isModalLayout": true
         },
         "runningHover": {
-            "url": "{{EndPoint}}/activity/#/RunningActivity/"
+            "url": "{{EndPoint}}/#/RunningActivity/"
         },
         "runningModal": {
-            "url": "{{EndPoint}}/activity/#/RunningActivity/"
+            "url": "{{EndPoint}}/#/RunningActivity/"
         }
     }
 }
