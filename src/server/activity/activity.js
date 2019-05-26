@@ -49,7 +49,7 @@ module.exports = function (fastify, opts, next) {
 };
 
 function validate(request, reply, done){
-  if(process.env.NODE_ENV == "production" ){
+  if(process.env.NODE_ENV == "production" && request.body){
     console.log('JWT DECODING', JSON.stringify(request.body));
     const jwt = request.body.jwt != undefined ? request.body.jwt : request.body.toString('utf8');
     try {
