@@ -5,6 +5,18 @@ const port = process.env.PORT || 3000;
 const path = require('path');
 
 const fastify = require('fastify')({ logger: mode != "production" });
+
+
+fastify.addContentTypeParser(['text/xml', 'application/xml', 'application/jwt', 'text/plain'], { parseAs: 'string' }, function (req, body, done) {
+  try {
+    console.log(body);
+    done(null, body);
+  } catch (err) {
+    err.statusCode = 400;
+    done(err, undefined);
+  }
+});
+
 fastify.register(require('./activity/activity.js'), { prefix: '/activity' });
 
 
