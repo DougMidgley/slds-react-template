@@ -33,6 +33,11 @@ module.exports = env => {
             use: { loader: "babel-loader" }
           },
           {
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: ['eslint-loader']
+          },
+          {
             test: /\.html$/,
             use: [
               {
@@ -86,7 +91,6 @@ module.exports = env => {
       },
       devtool: "inline-source-map",
       devServer: {
-        contentBase: "./dist",
         hot: true,
         contentBase: path.join(__dirname, "dist"),
         compress: true,

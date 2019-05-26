@@ -6,8 +6,6 @@ const baseConfig = require("./webpack.base.config");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const Visualizer = require('webpack-visualizer-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const prodConfiguration = env => {
   return merge([
@@ -31,11 +29,8 @@ const prodConfiguration = env => {
         new MiniCssExtractPlugin({
             filename: "[name].css",
             chunkFilename: "[id].css"
-          })
-        new OptimizeCssAssetsPlugin(),
-        // Change output file name if you want.
-        new Visualizer({ filename: "./statistics.html" }),
-        new BundleAnalyzerPlugin()
+          }),
+        new OptimizeCssAssetsPlugin()
       ]
     }
   ]);
