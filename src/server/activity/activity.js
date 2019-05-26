@@ -44,6 +44,7 @@ module.exports = function (fastify, opts, next) {
 
 function validate(request, reply, done){
   if(process.env.NODE_ENV == "production" ){
+    console.log('JWT DECODING', JSON.stringify(request.body));
     const jwt = request.body.jwt != undefined ? request.body.jwt : request.body.toString('utf8');
     try {
       request.body = jwtLib.decode(jwt, process.env.appSignatureMC, false, 'HS256');
