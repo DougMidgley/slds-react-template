@@ -14,7 +14,7 @@ module.exports = env => {
     {
       name: "base",
       mode: "development",
-      entry: ["@babel/polyfill", "./src/index.js"],
+      entry: ["@babel/polyfill", "./src/client/index.js"],
       output: {
         path: path.resolve(__dirname, "dist"),
         filename: "[name].[hash].js"
@@ -94,7 +94,10 @@ module.exports = env => {
         hot: true,
         contentBase: path.join(__dirname, "dist"),
         compress: true,
-        port: 3000
+        port: 3001,
+        proxy: {
+          '/api': 'http://localhost:3000'
+        }
       },
       plugins: [
         new webpack.DefinePlugin({
@@ -103,7 +106,7 @@ module.exports = env => {
         }),
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
-          template: "./src/index.html",
+          template: "./src/client/index.html",
           filename: "index.html"
         }),
         new webpack.HotModuleReplacementPlugin()

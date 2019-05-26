@@ -9,15 +9,28 @@ class App extends Component {
     this.state = {
       title: ""
     };
+    this.getapi = this.getapi.bind(this);
   }
-  static staticMethod() {
-    return 'static method has been called.';
+
+  componentDidMount() {
+    this.getapi();
   }
+  getapi() {
+    fetch('/api')
+      .then(response => response.json())
+      .then(data => this.setState((prevState) => {
+        prevState.apidata = JSON.stringify(data);
+        return prevState;
+      }));
+  }
+
   render() {
+    
     return (
       <div>
         <Button label="Changed Button" />
-        <div>This is where the activity goes</div>
+        <div>this is from the app file</div>
+        <div>{this.state.apidata}</div>
       </div>
         
     );

@@ -1,0 +1,14 @@
+[
+                      
+    {
+      "id": 1,
+      "label": "Select Message",
+      "assistiveText": "Message from Content Builder SMS"
+    },
+    {
+      "id": 2,
+      "label": "Confirm Message",
+      "assistiveText": "Preview and Confirm the message",
+      "configured": true
+    }
+  ]

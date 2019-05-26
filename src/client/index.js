@@ -18,8 +18,8 @@ const NotFound = (props) =>
   <div>Page Not Found :( </div>
 ;
 
-const App = lazy(() => import('./App.jsx'));
-const Activity = lazy(() => import('./Activity.jsx'));
+const App = lazy(() => import('./app/App.jsx'));
+const Activity = lazy(() => import('./activity/Activity.jsx'));
 
 
 ReactDOM.render(

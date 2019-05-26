@@ -1,6 +1,7 @@
 {
     "plugins": [
-        "react"
+        "react",
+        "babel"
     ],
     "parser": "babel-eslint",
     "parserOptions": {
@@ -29,7 +30,8 @@
       "object-curly-spacing": ["error", "always"],
       "no-extra-parens": "error",
       "max-len": ["error", { "code": 120 }],
-      "no-multi-spaces": "error"
+      "no-multi-spaces": "error",
+      "require-jsdoc":"off"
     },
     "settings": {
       "react": {
