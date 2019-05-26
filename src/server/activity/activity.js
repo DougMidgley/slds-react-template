@@ -42,7 +42,6 @@ module.exports = function (fastify, opts, next) {
   fastify.get('/login',{ preHandler : validate },(request, reply)=>{
     console.log(JSON.stringify(request.body));
     console.log('----');
-    console.log(JSON.stringify(request));
     reply.send('OK');
   });
   next();
