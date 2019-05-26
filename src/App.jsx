@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import Button from '../node_modules/@salesforce/design-system-react/components/button';
+import Button from '@salesforce/design-system-react/components/button';
 
 
 class App extends Component {
@@ -16,7 +16,7 @@ class App extends Component {
   render() {
     return (
         <div>
-            <Button label="Hello Button" />
+            <Button label="Changed Button" />
             <div>this is from the app file</div>
         </div>
         
