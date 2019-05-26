@@ -3,9 +3,8 @@
     "key": "{{ActivityKey}}",
     "metaData": {
         "version": "2.0",
-        "icon": "{{EndPoint}}/images/open.png",
-        "iconSmall": "{{EndPoint}}/images/openSmall.png",
-        "expressionBuilderPrefix": "DTE",
+        "icon": "{{EndPoint}}/assets/images/icon.png",
+        "expressionBuilderPrefix": "Custom",
         "category": "customer"
     },
     "type": "REST",
@@ -97,7 +96,7 @@
         }
     },
     "edit": {
-        "url": "{{EndPoint}}/activity/edit/#/",
+        "url": "{{EndPoint}}/activity/#/",
         "height": 500,
         "width": 800
     },
@@ -107,10 +106,10 @@
             "isModalLayout": true
         },
         "runningHover": {
-            "url": "{{EndPoint}}/activity/edit/#/RunningActivity/"
+            "url": "{{EndPoint}}/activity/#/RunningActivity/"
         },
         "runningModal": {
-            "url": "{{EndPoint}}/activity/edit/#/RunningActivity/"
+            "url": "{{EndPoint}}/activity/#/RunningActivity/"
         }
     }
 }
