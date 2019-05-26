@@ -1,4 +1,4 @@
-const url = require('URL');
+const url = require('url');
 const jwtLib = require('jwt-simple');
 module.exports = function (fastify, opts, next) {
   fastify.get('/config.json', (request, reply) => {
