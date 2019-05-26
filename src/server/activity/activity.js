@@ -25,7 +25,7 @@ module.exports = function (fastify, opts, next) {
   fastify.post('/save',{ preHandler : validate },(request, reply)=>{
     reply.send('OK');
   });
-  fastify.post('/login',{ preHandler : validate },(request, reply)=>{
+  fastify.get('/login',{ preHandler : validate },(request, reply)=>{
     try {
       const redirectLink = request.body.request.query.deepLink + request.body.request.organization.id;
       console.log('DIRECTING TO ', redirectLink );
@@ -35,7 +35,7 @@ module.exports = function (fastify, opts, next) {
       reply.code(500).send('Redirect Failed');
     }
   } );
-  fastify.post('/logout',{ preHandler : validate },(request, reply)=>{
+  fastify.get('/logout',{ preHandler : validate },(request, reply)=>{
     request.body == {};
     reply.send();
   });
