@@ -1,5 +1,10 @@
 const fastify = require('fastify')({ logger: true });
 
+const path = require('path');
+// serves static assets from the `src/ui` folder
+fastify.register(require('fastify-static'), {
+  root: path.join(__dirname, '..','..', 'dist'),
+});
 fastify.route({
   method: 'GET',
   url: '/api',
