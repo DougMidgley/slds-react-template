@@ -2,11 +2,12 @@
 
 const mode = process.env.NODE_ENV;
 const port = process.env.PORT || 3000;
-console.log("production", mode);
+const path = require('path');
 
 const fastify = require('fastify')({ logger: mode != "production" });
+fastify.register(require('./activity/activity.js'), { prefix: '/activity' });
 
-const path = require('path');
+
 // serves static assets from the `src/ui` folder
 fastify.register(require('fastify-static'), {
   root: path.join(__dirname, '..','..', 'dist'),

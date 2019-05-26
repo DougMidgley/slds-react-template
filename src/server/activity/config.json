@@ -1,0 +1,116 @@
+{
+    "workflowApiVersion": "1.1",
+    "key": "{{ActivityKey}}",
+    "metaData": {
+        "version": "2.0",
+        "icon": "{{EndPoint}}/images/open.png",
+        "iconSmall": "{{EndPoint}}/images/openSmall.png",
+        "expressionBuilderPrefix": "DTE",
+        "category": "customer"
+    },
+    "type": "REST",
+    "lang": {
+        "en-US": {
+            "name": "{{ActivityName}}",
+            "description": "Activity for define Contact Information "
+        }
+    },
+    "copySettings": { "allowCopy": true },
+    "useSso": true,
+    "arguments": {
+        "execute": {
+            "inArguments": [],
+            "outArguments": [],
+            "url": "{{EndPoint}}/activity/execute",
+            "verb": "POST",
+            "body": "",
+            "header": "",
+            "format": "json",
+            "useJwt": true,
+            "customerKey": "{{EncryptionCustomerKey}}",
+            "timeout": 10000
+        },
+        "testExecute": {
+            "inArguments": [],
+            "outArguments": [],
+            "url": "{{EndPoint}}/activity/testExecute",
+            "verb": "POST",
+            "body": "",
+            "header": "",
+            "format": "json",
+            "useJwt": true,
+            "customerKey": "{{EncryptionCustomerKey}}",
+            "timeout": 10000
+        }
+    },
+    "configurationArguments": {
+        "applicationExtensionKey": "Test_Activity",
+        "defaults": {},
+        "steps": [],
+        "save": {
+            "url": "{{EndPoint}}/activity/save/",
+            "body": "",
+            "header": "",
+            "verb": "POST",
+            "useJwt": true,
+            "customerKey": "{{EncryptionCustomerKey}}"
+        },
+        "publish": {
+            "url": "{{EndPoint}}/activity/publish/",
+            "verb": "POST",
+            "header": "",
+            "body": "",
+            "useJwt": true,
+            "customerKey": "{{EncryptionCustomerKey}}"
+        },
+        "validate": {
+            "url": "{{EndPoint}}/activity/validate/",
+            "verb": "POST",
+            "header": "",
+            "body": "",
+            "useJwt": true,
+            "customerKey": "{{EncryptionCustomerKey}}"
+        },
+        "testSave": {
+            "url": "{{EndPoint}}/activity/testSave/",
+            "body": "",
+            "header": "",
+            "verb": "POST",
+            "useJwt": true,
+            "customerKey": "{{EncryptionCustomerKey}}"
+        },
+        "testPublish": {
+            "url": "{{EndPoint}}/activity/testPublish/",
+            "verb": "POST",
+            "header": "",
+            "body": "",
+            "useJwt": true,
+            "customerKey": "{{EncryptionCustomerKey}}"
+        },
+        "testValidate": {
+            "url": "{{EndPoint}}/activity/testValidate/",
+            "verb": "POST",
+            "header": "",
+            "body": "",
+            "useJwt": true,
+            "customerKey": "{{EncryptionCustomerKey}}"
+        }
+    },
+    "edit": {
+        "url": "{{EndPoint}}/activity/edit/#/",
+        "height": 500,
+        "width": 800
+    },
+    "userInterfaces": {
+        "configInspector": {
+            "size": "medium",
+            "isModalLayout": true
+        },
+        "runningHover": {
+            "url": "{{EndPoint}}/activity/edit/#/RunningActivity/"
+        },
+        "runningModal": {
+            "url": "{{EndPoint}}/activity/edit/#/RunningActivity/"
+        }
+    }
+}
