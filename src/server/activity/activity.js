@@ -25,23 +25,15 @@ module.exports = function (fastify, opts, next) {
   fastify.post('/save',{ preHandler : validate },(request, reply)=>{
     reply.send('OK');
   });
-  fastify.post('/login',{ preHandler : validate },(request, reply)=>{
-    try {
-      const redirectLink = request.body.request.query.deepLink + request.body.request.organization.id;
-      console.log('DIRECTING TO ', redirectLink );
-      reply.redirect(redirectLink);
-    } catch (ex) {
-      console.error(ex);
-      reply.code(500).send('Redirect Failed');
-    }
-  } );
-  fastify.post('/logout',{ preHandler : validate },(request, reply)=>{
-    request.body == {};
-    reply.send();
+  fastify.get('/login',(request, reply)=>{
+    const clientId = '93m1a6r5pqy1vthgxr5e9wrc';
+    const url = 'https://sfmc-template.herokuapp.com/activity/oauth2';
+    const redirectLink = 'https://mc7t1g5l24q50klr8c1gqkvj63d1.auth.marketingcloudapis.com/v2/authorize?response_type=code&client_id=' + clientId +'&redirect_uri='+url;
+    reply.redirect(redirectLink);
   });
-  fastify.get('/login',{ preHandler : validate },(request, reply)=>{
-    console.log(JSON.stringify(request.body));
-    console.log('----');
+  fastify.get('/oauth2',(request, reply)=>{
+    console.log('BODY', JSON.stringify(request.body));
+    console.log('QUERY', JSON.stringify(request.query));
     reply.send('OK');
   });
   next();
