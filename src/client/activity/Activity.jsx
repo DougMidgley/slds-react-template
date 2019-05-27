@@ -33,6 +33,7 @@ class Activity extends React.Component {
      */
   componentDidMount() {
     journey.init(this.setState);
+    
   }
   /**
      * Standard React Function to manage updates to manage changes made to state

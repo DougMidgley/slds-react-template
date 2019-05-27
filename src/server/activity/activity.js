@@ -1,5 +1,6 @@
 const url = require('url');
 const jwtLib = require('jwt-simple');
+const fetch = require("node-fetch");
 module.exports = function (fastify, opts, next) {
   fastify.get('/config.json', (request, reply) => {
     const activityJSON = JSON.stringify(require('./config.json'))
@@ -26,9 +27,14 @@ module.exports = function (fastify, opts, next) {
     reply.send('OK');
   });
   fastify.get('/login',(request, reply)=>{
+
+    getUserInfo();
+
+
     const clientId = '93m1a6r5pqy1vthgxr5e9wrc';
     const url = 'https://sfmc-template.herokuapp.com/activity/oauth2';
-    const redirectLink = 'https://mc7t1g5l24q50klr8c1gqkvj63d1.auth.marketingcloudapis.com/v2/authorize?response_type=code&client_id=' + clientId +'&redirect_uri='+encodeURIComponent(url);
+    // const redirectLink = 'https://mc7t1g5l24q50klr8c1gqkvj63d1.auth.marketingcloudapis.com/v2/authorize?response_type=code&client_id=' + clientId +'&redirect_uri='+encodeURIComponent(url);
+    const redirectLink = 'https://sfmc-template.herokuapp.com/#/App';
     reply.redirect(redirectLink);
   });
   fastify.get('/oauth2',(request, reply)=>{
@@ -53,3 +59,15 @@ function validate(request, reply, done){
   } 
   done();
 }
+
+
+const getUserInfo = async () => {
+  try {
+    const url = "https://mc7t1g5l24q50klr8c1gqkvj63d1.auth.marketingcloudapis.com/v2/userinfo";
+    const response = await fetch(url);
+    const json = await response.json();
+    console.log(json);
+  } catch (error) {
+    console.log(error);
+  }
+};

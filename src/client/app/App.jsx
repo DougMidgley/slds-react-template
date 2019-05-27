@@ -10,10 +10,24 @@ class App extends Component {
       title: ""
     };
     this.getapi = this.getapi.bind(this);
+    this.getUserInfo = this.getUserInfo.bind(this);
   }
 
   componentDidMount() {
     this.getapi();
+    this.getUserInfo();
+  }
+
+  async getUserInfo(){ {
+    try {
+      const url = "https://mc7t1g5l24q50klr8c1gqkvj63d1.auth.marketingcloudapis.com/v2/userinfo";
+      const response = await fetch(url);
+      const json = await response.json();
+      console.log(json);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   }
   getapi() {
     fetch('/api')
