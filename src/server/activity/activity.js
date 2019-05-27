@@ -28,7 +28,7 @@ module.exports = function (fastify, opts, next) {
   fastify.get('/login',(request, reply)=>{
     const clientId = '93m1a6r5pqy1vthgxr5e9wrc';
     const url = 'https://sfmc-template.herokuapp.com/activity/oauth2';
-    const redirectLink = 'https://mc7t1g5l24q50klr8c1gqkvj63d1.auth.marketingcloudapis.com/v2/authorize?response_type=code&client_id=' + clientId +'&redirect_uri='+url;
+    const redirectLink = 'https://mc7t1g5l24q50klr8c1gqkvj63d1.auth.marketingcloudapis.com/v2/authorize?response_type=code&client_id=' + clientId +'&redirect_uri='+encodeURIComponent(url);
     reply.redirect(redirectLink);
   });
   fastify.get('/oauth2',(request, reply)=>{
