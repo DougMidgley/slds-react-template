@@ -31,7 +31,9 @@
       "no-extra-parens": "error",
       "max-len": ["error", { "code": 120 }],
       "no-multi-spaces": "error",
-      "require-jsdoc":"off"
+      "require-jsdoc":"off",
+      "no-console":"off",
+      "no-invalid-this":"off"
     },
     "settings": {
       "react": {

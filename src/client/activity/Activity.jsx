@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import ProgressIndicator from '@salesforce/design-system-react/components/progress-indicator'; 
 import Button from '@salesforce/design-system-react/components/button';
 import steps from './steps.json';
-import journey from './journeyBuilder.js';
+import { init, manageStep } from './journeyBuilder.js';
 
 
 
@@ -26,53 +26,22 @@ class Activity extends React.Component {
       disabledSteps: steps.slice(2, steps.length),
       selectedStep: steps[0],
     };
+    // this.getapi = this.getapi;
+    // this.init = init.bind(this);
+    this.setState = this.setState.bind(this);
   }
 
   /**
      * run all postmonger triggers and manage response
      */
   componentDidMount() {
-    journey.init(this.setState);
-    
+    init(this.setState);
   }
   /**
      * Standard React Function to manage updates to manage changes made to state
      */
   componentDidUpdate() {
-    // console.log('componentDidUpdate', prevState, this.state);
-    if (journey.ready(this.state.journey)) {
-      this.setState(
-        (prevState) => {
-          console.log('Initial Config', this.state);
-          prevState.steps = steps;
-          if (
-            prevState.payload.arguments.execute.inArguments.length > 0 &&
-                      prevState.payload.arguments.execute.inArguments[0].Steps &&
-                      prevState.payload.arguments.execute.inArguments[0].Steps.length > 0
-          ) {
-            prevState.payload.arguments.execute.inArguments[0].Steps.forEach((el, i) => {
-              prevState.steps[i].config = el.config;
-              prevState.steps[i].configured = el.configured;
-            });
-          }
-          prevState.selectedStep = prevState.steps[0];
-          return prevState;
-        },
-        () => connection.trigger('ready')
-      );
-    } else if (this.state.selectedStep != null) {
-      connection.trigger('updateButton', {
-        button: 'back',
-        enabled: this.state.selectedStep.id > 1,
-        visible: this.state.selectedStep.id > 1
-      });
-      connection.trigger('updateButton', {
-        button: 'next',
-        text: this.state.selectedStep.id == this.state.steps.length ? 'done' : 'next',
-        enabled: this.state.selectedStep.configured == true ? true : false,
-        visible: true
-      });
-    }
+    manageStep(this.setState, this.state);
   }
 
 	handleStepEvent = (event, data) => {

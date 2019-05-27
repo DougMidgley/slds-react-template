@@ -9,8 +9,9 @@ class App extends Component {
     this.state = {
       title: ""
     };
-    this.getapi = this.getapi.bind(this);
-    this.getUserInfo = this.getUserInfo.bind(this);
+    // this.getapi = this.getapi.bind(this);
+    // this.getUserInfo = this.getUserInfo.bind(this);
+    
   }
 
   componentDidMount() {
