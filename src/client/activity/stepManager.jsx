@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 
 import PropTypes from "prop-types";
 import ProgressIndicator from "@salesforce/design-system-react/components/progress-indicator";
-import Button from "@salesforce/design-system-react/components/button";
 import Alert from "@salesforce/design-system-react/components/alert";
 import AlertContainer from "@salesforce/design-system-react/components/alert/container";
 import Spinner from "@salesforce/design-system-react/components/spinner";
@@ -24,13 +23,12 @@ class StepManager extends React.Component {
       steps: props.steps,
       completedSteps: [],
       disabledSteps: props.steps.slice(2, props.steps.length),
-      selectedStep: props.steps[0]
+      selectedStep: props.steps[0],
+      config:{}
     };
-    // this.getapi = this.getapi;
-    // this.init = init.bind(this);
-    // this.setState = this.setState.bind(this);
     this.showStep = this.showStep.bind(this);
     this.handleStepEvent = this.handleStepEvent.bind(this);
+    this.handleStepConfig = this.handleStepConfig.bind(this);
   }
 
   /**
@@ -107,6 +105,20 @@ class StepManager extends React.Component {
     }
   }
 
+  /**
+     * validates the config from the step
+     * @param {object} step - step which needs components updating
+     */
+  handleStepConfig(step) {
+    console.log('handleStepConfig', step);
+    this.setState((prevState) => {
+      prevState.selectedStep = step;
+      prevState.steps[step.id - 1] = step;
+      console.log('prevState.steps[step.id]: ' + prevState);
+      return prevState;
+    });
+  }
+
     handleStepEvent = (event, data) => {
       this.setState({
         completedSteps: steps.slice(0, data.step.id),
@@ -114,6 +126,32 @@ class StepManager extends React.Component {
         selectedStep: data.step
       });
     };
+
+    /**
+     * manages which step should be displayed in the Activity window
+     * then triggers to button changes
+     * @param {object} data - step which should be displayed
+     * @param {string} action - was this step going back or forth
+     */
+    handleStepChange(data) {
+      this.setState(
+        (prevState) => {
+          if (data == 'next' && prevState.selectedStep.id == prevState.steps.length) {
+            prevState.payload.metaData.isConfigured = true;
+            console.log('state before parsing', prevState);
+            prevState.payload = this.parseArguments(prevState.payload, prevState.interaction.id);
+            connection.trigger('updateActivity', prevState.payload);
+          } else if (data == 'next') {
+            prevState.selectedStep = prevState.steps[this.state.selectedStep.id];
+            return prevState;
+          } else if (data == 'prev') {
+            prevState.selectedStep = prevState.steps[this.state.selectedStep.id - 2];
+            return prevState;
+          }
+        },
+        () => connection.trigger('ready')
+      );
+    }
     /**
      * manages which step should be displayed in the Activity window
      * @param {object} step - step which should be displayed
@@ -134,13 +172,18 @@ class StepManager extends React.Component {
           </AlertContainer>
         );
       } else if (this.props.children.length == this.props.steps.length) {
-        return this.props.children[step.id - 1];
+        // add step config change handler
+        const step = this.props.children[step.id - 1];
+        step.props.selectedStep = this.state.selectedStep;
+        step.props.handleStepConfig = this.handleStepConfig;
+        return step;
       } else {
         throw new Error("unknown action");
       }
     }
 
     render() {
+      console.log('stepManager', this.state, this.props);
       return (
         <div
           style={{

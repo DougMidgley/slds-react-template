@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import steps from './steps.json';
 import StepManager from './stepManager.jsx';
 import './styling.css';
+import Step1 from './steps/1-selectType.jsx';
 
 
 
@@ -25,7 +26,7 @@ class Activity extends React.Component {
         errorMsg = "Unfortunately there was an error"
         steps={steps}
       >
-        <div>step1</div>
+        <Step1 handleStepConfig={this.handleStepConfig} selectedStep={this.state.selectedStep}/>
         <div>step2</div>
       </StepManager>
 	  );
