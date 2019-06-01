@@ -2,10 +2,9 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 
 import PropTypes from 'prop-types';
-import ProgressIndicator from '@salesforce/design-system-react/components/progress-indicator'; 
-import Button from '@salesforce/design-system-react/components/button';
 import steps from './steps.json';
-import { init, manageStep } from './journeyBuilder.js';
+import StepManager from './stepManager.jsx';
+import './styling.css';
 
 
 
@@ -19,63 +18,19 @@ import { init, manageStep } from './journeyBuilder.js';
 class Activity extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      mid : this.props.match.params.mid,
-      steps,
-      completedSteps: [],
-      disabledSteps: steps.slice(2, steps.length),
-      selectedStep: steps[0],
-    };
-    // this.getapi = this.getapi;
-    // this.init = init.bind(this);
-    this.setState = this.setState.bind(this);
   }
-
-  /**
-     * run all postmonger triggers and manage response
-     */
-  componentDidMount() {
-    init(this.setState);
-  }
-  /**
-     * Standard React Function to manage updates to manage changes made to state
-     */
-  componentDidUpdate() {
-    manageStep(this.setState, this.state);
-  }
-
-	handleStepEvent = (event, data) => {
-	  this.setState({
-	    completedSteps: steps.slice(0, data.step.id),
-	    disabledSteps:
-				data.step.id < steps.length
-				  ? steps.slice(data.step.id + 2, steps.length)
-				  : [],
-	    selectedStep: data.step,
-	  });
-	};
-
-	render() {
+  render() {
 	  return (
-	      <div
-	        style={{
-	          padding: '4rem 1rem 0px',
-	          background:
-							this.props.variant === 'modal' ? 'rgb(244, 246, 249)' : undefined,
-	        }}
-	      >
-	        <ProgressIndicator
-	          id="example-progress-indicator"
-	          completedSteps={this.state.completedSteps}
-	          disabledSteps={this.state.disabledSteps}
-	          onStepClick={this.handleStepEvent}
-	          steps={this.state.steps}
-	          selectedStep={this.state.selectedStep}
-	          // tooltipIsOpenSteps={stepsBasic.slice(0, 2)}
-	        />
-	      </div>
+      <StepManager
+        errorMsg = "Unfortunately there was an error"
+        mid={this.props.match.params.mid}
+        steps={steps}
+      >
+        <div>step1</div>
+        <div>step2</div>
+      </StepManager>
 	  );
-	}
+  }
 }
 
 Activity.displayName = 'ProgressIndicatorDefault';

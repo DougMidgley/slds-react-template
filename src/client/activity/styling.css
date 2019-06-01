@@ -1,0 +1,16 @@
+html {
+    background: #ffffff !important;
+}
+.ProgressContainer {
+    padding: 0rem 1rem 0.5rem;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #ffffff;
+}
+.PaddedFormElement {
+    padding: 0 30%;
+}
+.Activity{
+    padding-top: 24px;
+}
