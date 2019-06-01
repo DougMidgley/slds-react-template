@@ -26,7 +26,7 @@ class Activity extends React.Component {
         errorMsg = "Unfortunately there was an error"
         steps={steps}
       >
-        <Step1 handleStepConfig={this.handleStepConfig} selectedStep={this.state.selectedStep}/>
+        <Step1/>
         <div>step2</div>
       </StepManager>
 	  );
