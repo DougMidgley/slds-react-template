@@ -23,7 +23,6 @@ class Activity extends React.Component {
 	  return (
       <StepManager
         errorMsg = "Unfortunately there was an error"
-        mid={this.props.match.params.mid}
         steps={steps}
       >
         <div>step1</div>

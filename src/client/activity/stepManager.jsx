@@ -75,7 +75,6 @@ class StepManager extends React.Component {
     ) {
       this.setState(
         prevState => {
-          console.log("Initial Config", state);
           prevState.steps = steps;
           if (
             prevState.payload.arguments.execute.inArguments.length > 0 &&

@@ -29,7 +29,7 @@ ReactDOM.render(
       <Suspense fallback={<div>Loading...</div>}>
         <Switch>
           <Route exact path="/App" component={App} />
-          <Route exact path="/Activity/:mid" component={Activity} />
+          <Route exact path="/Activity" component={Activity} />
           <Route path='*' component={NotFound} />
         </Switch>
       </Suspense>
