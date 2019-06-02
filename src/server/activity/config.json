@@ -47,7 +47,7 @@
         "defaults": {},
         "steps": [],
         "save": {
-            "url": "{{EndPoint}}/activity/save/",
+            "url": "{{EndPoint}}/activity/save",
             "body": "",
             "header": "",
             "verb": "POST",
@@ -55,7 +55,7 @@
             "customerKey": "{{EncryptionCustomerKey}}"
         },
         "publish": {
-            "url": "{{EndPoint}}/activity/publish/",
+            "url": "{{EndPoint}}/activity/publish",
             "verb": "POST",
             "header": "",
             "body": "",
@@ -63,7 +63,7 @@
             "customerKey": "{{EncryptionCustomerKey}}"
         },
         "validate": {
-            "url": "{{EndPoint}}/activity/validate/",
+            "url": "{{EndPoint}}/activity/validate",
             "verb": "POST",
             "header": "",
             "body": "",
@@ -71,7 +71,7 @@
             "customerKey": "{{EncryptionCustomerKey}}"
         },
         "testSave": {
-            "url": "{{EndPoint}}/activity/testSave/",
+            "url": "{{EndPoint}}/activity/testSave",
             "body": "",
             "header": "",
             "verb": "POST",
@@ -79,7 +79,7 @@
             "customerKey": "{{EncryptionCustomerKey}}"
         },
         "testPublish": {
-            "url": "{{EndPoint}}/activity/testPublish/",
+            "url": "{{EndPoint}}/activity/testPublish",
             "verb": "POST",
             "header": "",
             "body": "",
@@ -87,7 +87,7 @@
             "customerKey": "{{EncryptionCustomerKey}}"
         },
         "testValidate": {
-            "url": "{{EndPoint}}/activity/testValidate/",
+            "url": "{{EndPoint}}/activity/testValidate",
             "verb": "POST",
             "header": "",
             "body": "",
@@ -106,10 +106,10 @@
             "isModalLayout": true
         },
         "runningHover": {
-            "url": "{{EndPoint}}/#/RunningActivity/"
+            "url": "{{EndPoint}}/#/RunningActivity"
         },
         "runningModal": {
-            "url": "{{EndPoint}}/#/RunningActivity/"
+            "url": "{{EndPoint}}/#/RunningActivity"
         }
     }
 }
