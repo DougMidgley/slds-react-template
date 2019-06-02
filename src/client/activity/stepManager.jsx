@@ -196,6 +196,129 @@ class StepManager extends React.Component {
         throw new Error("unknown action");
       }
     }
+    /**
+     * Manages what data is saved back to the Journey, adding addtional values
+     * @param {object} payload - data to be stored back to the journey.
+     * @param {string} interactionId - id of the journey to add to key
+     * @return {object} payload updated for saving to journey builder
+     */
+    parseArguments(payload, interactionId) {
+      payload.description = 'This is a description in payload';
+      const stepConfig = [];
+      this.state.steps.forEach((element) => {
+        stepConfig.push({
+          config: element.config,
+          configured: element.configured
+        });
+      });
+
+      let activityVersion; 
+      if(this.state.steps.length == 4){
+        if(this.state.steps[0].config.hasOwnProperty('onlyFirst')){
+          activityVersion = currentVersion;
+
+        }else{
+          activityVersion = '2.0';
+        }
+      }else{
+        activityVersion = '3.0';
+      }
+      const randomKey = [...Array(10)].map((_) => (Math.random() * 36 | 0).toString(36)).join('');
+      console.log('random Key', randomKey);
+      console.log('activityVersion', activityVersion);
+      payload.arguments.execute.inArguments = [
+        {
+          ActivityVersion: activityVersion,
+          Steps: stepConfig,
+          interactionId: interactionId,
+          activityKey: randomKey,
+          bu: this.state.bu
+        }
+      ];
+      payload.arguments.execute.outArguments = [
+        { key: '' },
+        { endDate: '' },
+        { journeyKey: '' }
+      ];
+
+      payload.schema = {
+        arguments: {
+          execute: {
+            inArguments: [
+              {
+                ActivityVersion: {
+                  dataType: 'Text',
+                  isNullable: false,
+                  direction: 'in'
+                }
+              },
+              {
+                Steps: {
+                  dataType: 'Array',
+                  isNullable: false,
+                  direction: 'in'
+                }
+              },
+              {
+                interactionId: {
+                  dataType: 'Text',
+                  isNullable: false,
+                  direction: 'in'
+                }
+              },
+              {
+                bu: {
+                  dataType: 'Number',
+                  isNullable: false,
+                  direction: 'in'
+                }
+              }
+            ],
+            outArguments: [
+              {
+                key: {
+                  dataType: 'Text',
+                  isNullable: false,
+                  direction: 'out',
+                  access: 'Visible'
+                }
+              },
+              {
+                endDate: {
+                  dataType: 'Date',
+                  isNullable: false,
+                  direction: 'out',
+                  access: 'Visible'
+                }
+              },
+              {
+                journeyKey: {
+                  dataType: 'Text',
+                  isNullable: false,
+                  direction: 'out',
+                  access: 'Visible'
+                }
+              }
+            ]
+          }
+        }
+      };
+      console.log(payload.arguments.execute.inArguments);
+      if (
+        payload.arguments.execute.inArguments[0].interactionId == null ||
+            payload.arguments.execute.inArguments[0].activityKey == null
+      ) {
+        throw Error(
+          'InteractionId or activtiyKey (Random Generated) set to Null. InteractionId: ' +
+                    payload.arguments.execute.inArguments[0].interactionId +
+                    ' ActivityKey:' +
+                    payload.arguments.execute.inArguments[0].activityKey
+        );
+      } else {
+        console.log('payload', JSON.stringify(payload));
+        return payload;
+      }
+    }
 
     render() {
       console.log("stepManager", this.state, this.props);

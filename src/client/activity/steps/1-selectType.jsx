@@ -17,7 +17,6 @@ class TaskType extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
-    this.constructorValue = "Hi Constructor";
   }
     static label = "Select Message";
     static assistiveText = "Message from Content Builder SMS";
@@ -45,8 +44,6 @@ class TaskType extends Component {
      * @return {jsx} returns react component
      */
     render() {
-      console.log("step 1 state", this.state);
-      console.log("step 1 prop", this.props);
       return (
         <section className="slds-grid slds-p-around_medium slds-grid_vertical-align-center">
           <div className="slds-col slds-text-align_center">
