@@ -108,7 +108,7 @@ class StepManager extends React.Component {
       connection.trigger("updateButton", {
         button: "next",
         text: this.state.selectedStep.id == this.state.steps.length ? "done" : "next",
-        enabled: this.state.selectedStep.configured == true ? true : false,
+        enabled: this.state.selectedStep.configured == true || this.state.selectedStep.id == this.state.steps.length ? true : false,
         visible: true
       });
     }
