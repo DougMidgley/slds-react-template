@@ -12,7 +12,7 @@ const connection = new Postmonger.Session();
 function extractStepDetails(steps) {
   const arr = [];
   steps.forEach((e,i) => {
-    arr.push({ id: i +1 , label: e.type.label, assistiveText: e.type.assistiveText });
+    arr.push({ id: i +1 , label: e.type.label, assistiveText: e.type.assistiveText, configured : e.type.configured });
   });
   return arr;
 }
@@ -108,7 +108,7 @@ class StepManager extends React.Component {
       connection.trigger("updateButton", {
         button: "next",
         text: this.state.selectedStep.id == this.state.steps.length ? "done" : "next",
-        enabled: this.state.selectedStep.configured == true || this.state.selectedStep.id == this.state.steps.length ? true : false,
+        enabled: this.state.selectedStep.configured == true ? true : false,
         visible: true
       });
     }

@@ -17,6 +17,7 @@ class Summary extends Component {
   }
     static label = "Confirm Message";
     static assistiveText = "Message from Content Builder SMS";
+    static configured = true;
 
     /**
      * React Component to display
