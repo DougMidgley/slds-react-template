@@ -6,9 +6,16 @@ import ProgressIndicator from "@salesforce/design-system-react/components/progre
 import Alert from "@salesforce/design-system-react/components/alert";
 import AlertContainer from "@salesforce/design-system-react/components/alert/container";
 import Spinner from "@salesforce/design-system-react/components/spinner";
-import steps from "./steps.json";
 import Postmonger from "postmonger";
 const connection = new Postmonger.Session();
+
+function extractStepDetails(steps) {
+  const arr = [];
+  steps.forEach((e,i) => {
+    arr.push({ id: i +1 , label: e.type.label, assistiveText: e.type.assistiveText });
+  });
+  return arr;
+}
 
 /*
  * This example allows you to select the next
@@ -19,12 +26,14 @@ const connection = new Postmonger.Session();
 class StepManager extends React.Component {
   constructor(props) {
     super(props);
+    console.log("children", props.children);
+    const steps = extractStepDetails(props.children);
     this.state = {
-      steps: props.steps,
+      steps: steps,
       completedSteps: [],
-      disabledSteps: props.steps.slice(2, props.steps.length),
-      selectedStep: props.steps[0],
-      config:{}
+      disabledSteps: steps.slice(2, steps.length),
+      selectedStep: steps[0],
+      config: {}
     };
     this.showStep = this.showStep.bind(this);
     this.handleStepEvent = this.handleStepEvent.bind(this);
@@ -98,7 +107,7 @@ class StepManager extends React.Component {
       });
       connection.trigger("updateButton", {
         button: "next",
-        text: this.state.selectedStep.id == this.props.steps.length ? "done" : "next",
+        text: this.state.selectedStep.id == this.state.steps.length ? "done" : "next",
         enabled: this.state.selectedStep.configured == true ? true : false,
         visible: true
       });
@@ -109,20 +118,21 @@ class StepManager extends React.Component {
      * validates the config from the step
      * @param {object} step - step which needs components updating
      */
-  handleStepConfig(step) {
-    console.log('handleStepConfig', step);
-    this.setState((prevState) => {
+  handleStepConfig(step, config) {
+    console.log("handleStepConfig", step);
+    this.setState(prevState => {
       prevState.selectedStep = step;
       prevState.steps[step.id - 1] = step;
-      console.log('prevState.steps[step.id]: ' + prevState);
+      prevState.config = Object.assign(prevState.config, config);
+      console.log("prevState.steps[step.id]: " + prevState);
       return prevState;
     });
   }
 
     handleStepEvent = (event, data) => {
       this.setState({
-        completedSteps: steps.slice(0, data.step.id),
-        disabledSteps: data.step.id < steps.length ? steps.slice(data.step.id + 2, steps.length) : [],
+        completedSteps: this.state.steps.slice(0, data.step.id),
+        disabledSteps: data.step.id < this.state.steps.length ? this.state.steps.slice(data.step.id + 2, this.state.steps.length) : [],
         selectedStep: data.step
       });
     };
@@ -135,21 +145,21 @@ class StepManager extends React.Component {
      */
     handleStepChange(data) {
       this.setState(
-        (prevState) => {
-          if (data == 'next' && prevState.selectedStep.id == prevState.steps.length) {
+        prevState => {
+          if (data == "next" && prevState.selectedStep.id == prevState.steps.length) {
             prevState.payload.metaData.isConfigured = true;
-            console.log('state before parsing', prevState);
+            console.log("state before parsing", prevState);
             prevState.payload = this.parseArguments(prevState.payload, prevState.interaction.id);
-            connection.trigger('updateActivity', prevState.payload);
-          } else if (data == 'next') {
+            connection.trigger("updateActivity", prevState.payload);
+          } else if (data == "next") {
             prevState.selectedStep = prevState.steps[this.state.selectedStep.id];
             return prevState;
-          } else if (data == 'prev') {
+          } else if (data == "prev") {
             prevState.selectedStep = prevState.steps[this.state.selectedStep.id - 2];
             return prevState;
           }
         },
-        () => connection.trigger('ready')
+        () => connection.trigger("ready")
       );
     }
     /**
@@ -158,9 +168,13 @@ class StepManager extends React.Component {
      * @return {jsx} returns react component
      */
     showStep(step) {
+      console.log("show step step", step);
+      console.log("show step state", this.state);
+      console.log("show step props", this.props);
+      const stepImm = step;
       if (!step) {
         return <Spinner assistiveText="Loading ..." id="loading-status-icon" size="large" variant="brand" />;
-      } else if (this.state.interaction && this.state.interaction.id == null) {
+      } else if (stepImm && this.state.interaction && this.state.interaction.id == null) {
         return (
           <AlertContainer>
             <Alert
@@ -171,19 +185,20 @@ class StepManager extends React.Component {
             />
           </AlertContainer>
         );
-      } else if (this.props.children.length == this.props.steps.length) {
+      } else if (stepImm && this.props.children.length == this.state.steps.length) {
         // add step config change handler
-        const step = this.props.children[step.id - 1];
-        step.props.selectedStep = this.state.selectedStep;
-        step.props.handleStepConfig = this.handleStepConfig;
-        return step;
+        return React.cloneElement(this.props.children[stepImm.id - 1], {
+          selectedStep: this.state.selectedStep,
+          handleStepConfig: this.handleStepConfig,
+          config: this.state.config
+        });
       } else {
         throw new Error("unknown action");
       }
     }
 
     render() {
-      console.log('stepManager', this.state, this.props);
+      console.log("stepManager", this.state, this.props);
       return (
         <div
           style={{
@@ -198,7 +213,7 @@ class StepManager extends React.Component {
               completedSteps={this.state.completedSteps}
               disabledSteps={this.state.disabledSteps}
               onStepClick={this.handleStepEvent}
-              steps={this.props.steps}
+              steps={this.state.steps}
               selectedStep={this.state.selectedStep}
               // tooltipIsOpenSteps={stepsBasic.slice(0, 2)}
             />
