@@ -272,6 +272,24 @@ class StepManager extends React.Component {
                   isNullable: false,
                   direction: 'in'
                 }
+              },
+              {
+                eventData: {
+                  dataType: 'Number',
+                  isNullable: true,
+                  direction: 'in',
+                  readOnly: false,
+                  access: "Hidden"
+                }
+              },
+              {
+                contactKey: {
+                  dataType: 'Number',
+                  isNullable: true,
+                  direction: 'in',
+                  readOnly: false,
+                  access: "Hidden"
+                }
               }
             ],
             outArguments: [

@@ -18,12 +18,19 @@ module.exports = function (fastify, opts, next) {
     reply.send(JSON.parse(activityJSON));
   });
   fastify.post('/publish',{ preHandler : validate },(request, reply)=>{
+    console.log('Publish',request.body );
     reply.send('OK');
   });
   fastify.post('/validate',{ preHandler : validate },(request, reply)=>{
+    console.log('Validate',request.body );
     reply.send('OK');
   });
   fastify.post('/save',{ preHandler : validate },(request, reply)=>{
+    console.log('Save',request.body );
+    reply.send('OK');
+  });
+  fastify.post('/execute',{ preHandler : validate },(request, reply)=>{
+    console.log('Execute',request.body );
     reply.send('OK');
   });
   fastify.get('/login',(request, reply)=>{
