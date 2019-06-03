@@ -72,7 +72,7 @@ class StepManager extends React.Component {
      * Standard React Function to manage updates to manage changes made to state
      */
   componentDidUpdate() {
-    console.log('componentDidUpdate', state);
+    console.log('componentDidUpdate', this.state);
 
     if (
       this.state.journey.tokens &&
