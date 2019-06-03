@@ -72,7 +72,8 @@ class StepManager extends React.Component {
      * Standard React Function to manage updates to manage changes made to state
      */
   componentDidUpdate() {
-    // console.log('componentDidUpdate', prevState, state);
+    console.log('componentDidUpdate', state);
+
     if (
       this.state.journey.tokens &&
             this.state.journey.culture &&
@@ -80,6 +81,7 @@ class StepManager extends React.Component {
             this.state.journey.interaction &&
             this.state.journey.selectedStep == null
     ) {
+
       this.setState(
         prevState => {
           prevState.steps = steps;
@@ -207,7 +209,6 @@ class StepManager extends React.Component {
       const stepConfig = [];
       this.state.steps.forEach((element) => {
         stepConfig.push({
-          config: element.config,
           configured: element.configured
         });
       });
@@ -230,6 +231,8 @@ class StepManager extends React.Component {
         {
           ActivityVersion: activityVersion,
           Steps: stepConfig,
+          config: JSON.stringify(this.state.config),
+          row: '{{Event.DEAudience-7bfc77f1-3223-8e46-78c7-b0daea2bf554._CustomObjectKey}}',
           interactionId: interactionId,
           activityKey: randomKey,
           bu: this.state.bu
@@ -247,6 +250,20 @@ class StepManager extends React.Component {
             inArguments: [
               {
                 ActivityVersion: {
+                  dataType: 'Text',
+                  isNullable: false,
+                  direction: 'in'
+                }
+              },
+              {
+                config: {
+                  dataType: 'Text',
+                  isNullable: false,
+                  direction: 'in'
+                }
+              },
+              {
+                row: {
                   dataType: 'Text',
                   isNullable: false,
                   direction: 'in'
