@@ -11,8 +11,13 @@ const connection = new Postmonger.Session();
 
 function extractStepDetails(steps) {
   const arr = [];
-  steps.forEach((e,i) => {
-    arr.push({ id: i +1 , label: e.type.label, assistiveText: e.type.assistiveText, configured : e.type.configured });
+  steps.forEach((e, i) => {
+    arr.push({
+      id: i + 1,
+      label: e.props.label,
+      assistiveText: e.props.assistiveText,
+      configured: e.props.configured
+    });
   });
   return arr;
 }
@@ -31,29 +36,22 @@ class StepManager extends React.Component {
     this.state = {
       steps: steps,
       completedSteps: [],
-      disabledSteps: steps.slice(2, steps.length),
+      disabledSteps: steps.slice(0, steps.length),
       selectedStep: steps[0],
       config: {}
     };
     this.showStep = this.showStep.bind(this);
     this.handleStepEvent = this.handleStepEvent.bind(this);
     this.handleStepConfig = this.handleStepConfig.bind(this);
+    this.readyHandler = this.readyHandler.bind(this);
+    this.buttonHandler = this.buttonHandler.bind(this);
   }
 
   /**
      * run all postmonger triggers and manage response
      */
   componentDidMount() {
-    this.setState((prevState, props) => {
-      prevState.journey = {};
-      return prevState;
-    });
-    connection.on("requestedTokens", data =>
-      this.setState((prevState, props) => {
-        prevState.journey.tokens = data;
-        return prevState;
-      })
-    );
+    connection.on("requestedTokens", data => this.setState({ tokens: data }));
     connection.on("requestedCulture", data => this.setState({ culture: data }));
     connection.on("initActivity", data => this.setState({ payload: data }));
     connection.on("requestedSchema", data => this.setState({ schema: data }));
@@ -68,51 +66,60 @@ class StepManager extends React.Component {
     connection.trigger("requestSchema");
     connection.trigger("requestInteraction");
   }
+
+  readyHandler() {
+    this.setState(
+      prevState => {
+        prevState.steps = steps;
+        if (
+          prevState.payload.arguments.execute.inArguments.length > 0 &&
+                    prevState.payload.arguments.execute.inArguments[0].Steps &&
+                    prevState.payload.arguments.execute.inArguments[0].Steps.length > 0
+        ) {
+          prevState.payload.arguments.execute.inArguments[0].Steps.forEach((el, i) => {
+            prevState.steps[i].config = el.config;
+            prevState.steps[i].configured = el.configured;
+          });
+        }
+        prevState.selectedStep = prevState.steps[0];
+        return prevState;
+      },
+      () => connection.trigger("ready")
+    );
+  }
+
+  buttonHandler() {
+    // Show back button when after the 1st step
+    connection.trigger("updateButton", {
+      button: "back",
+      enabled: this.state.selectedStep.id > 1,
+      visible: this.state.selectedStep.id > 1
+    });
+    // Show next/done button when the current step is configured
+    connection.trigger("updateButton", {
+      button: "next",
+      text: this.state.selectedStep.id == this.state.steps.length ? "done" : "next",
+      enabled: this.state.selectedStep.configured == true ? true : false,
+      visible: true
+    });
+  }
   /**
      * Standard React Function to manage updates to manage changes made to state
      */
   componentDidUpdate() {
-    console.log('componentDidUpdate', this.state);
-
+    console.log("componentDidUpdate", this.state);
     if (
-      this.state.journey.tokens &&
-            this.state.journey.culture &&
-            this.state.journey.payload &&
-            this.state.journey.interaction &&
-            this.state.journey.selectedStep == null
+      this.state.tokens &&
+            this.state.culture &&
+            this.state.payload &&
+            this.state.interaction &&
+            this.state.selectedStep == null
     ) {
-
-      this.setState(
-        prevState => {
-          prevState.steps = steps;
-          if (
-            prevState.payload.arguments.execute.inArguments.length > 0 &&
-                        prevState.payload.arguments.execute.inArguments[0].Steps &&
-                        prevState.payload.arguments.execute.inArguments[0].Steps.length > 0
-          ) {
-            prevState.payload.arguments.execute.inArguments[0].Steps.forEach((el, i) => {
-              prevState.steps[i].config = el.config;
-              prevState.steps[i].configured = el.configured;
-            });
-          }
-          prevState.selectedStep = prevState.steps[0];
-          return prevState;
-        },
-        () => connection.trigger("ready")
-      );
+      // All the postman requests have been returned so can continue
+      this.readyHandler();
     } else if (this.state.selectedStep != null) {
-      console.log("else if");
-      connection.trigger("updateButton", {
-        button: "back",
-        enabled: this.state.selectedStep.id > 1,
-        visible: this.state.selectedStep.id > 1
-      });
-      connection.trigger("updateButton", {
-        button: "next",
-        text: this.state.selectedStep.id == this.state.steps.length ? "done" : "next",
-        enabled: this.state.selectedStep.configured == true ? true : false,
-        visible: true
-      });
+      // Manage Button Visibility now that the first step has been loaded
+      this.buttonHandler();
     }
   }
 
@@ -121,20 +128,31 @@ class StepManager extends React.Component {
      * @param {object} step - step which needs components updating
      */
   handleStepConfig(step, config) {
-    console.log("handleStepConfig", step);
+    console.log("handleStepConfig", step, config);
     this.setState(prevState => {
-      prevState.selectedStep = step;
+      prevState.selectedStep = prevState.steps[step.id-1];
+      prevState.completedSteps = prevState.steps.slice(0,step.configured?step.id:step.id-1);
+      prevState.disabledSteps = prevState.steps.slice(step.configured?step.id +1 :step.id);
       prevState.steps[step.id - 1] = step;
       prevState.config = Object.assign(prevState.config, config);
-      console.log("prevState.steps[step.id]: " + prevState);
+      console.log("New Config " + prevState);
       return prevState;
     });
   }
 
     handleStepEvent = (event, data) => {
+      console.log('handleStepEvent');
+
+      console.log('completed ', this.state.steps.slice(0, data.step.id));
+      console.log('disabledSteps ', data.step.id < this.state.steps.length
+        ? this.state.steps.slice(data.step.id + 2, this.state.steps.length)
+        : []);
       this.setState({
-        completedSteps: this.state.steps.slice(0, data.step.id),
-        disabledSteps: data.step.id < this.state.steps.length ? this.state.steps.slice(data.step.id + 2, this.state.steps.length) : [],
+        /* completedSteps: this.state.steps.slice(0, data.step.id),
+        disabledSteps:
+                data.step.id < this.state.steps.length
+                  ? this.state.steps.slice(data.step.id + 2, this.state.steps.length)
+                  : [],*/
         selectedStep: data.step
       });
     };
@@ -205,44 +223,39 @@ class StepManager extends React.Component {
      * @return {object} payload updated for saving to journey builder
      */
     parseArguments(payload, interactionId) {
-      payload.description = 'This is a description in payload';
+      payload.description = "This is a description in payload";
       const stepConfig = [];
-      this.state.steps.forEach((element) => {
+      this.state.steps.forEach(element => {
         stepConfig.push({
           configured: element.configured
         });
       });
 
-      let activityVersion; 
-      if(this.state.steps.length == 4){
-        if(this.state.steps[0].config.hasOwnProperty('onlyFirst')){
+      let activityVersion;
+      if (this.state.steps.length == 4) {
+        if (this.state.steps[0].config.hasOwnProperty("onlyFirst")) {
           activityVersion = currentVersion;
-
-        }else{
-          activityVersion = '2.0';
+        } else {
+          activityVersion = "2.0";
         }
-      }else{
-        activityVersion = '3.0';
+      } else {
+        activityVersion = "3.0";
       }
-      const randomKey = [...Array(10)].map((_) => (Math.random() * 36 | 0).toString(36)).join('');
-      console.log('random Key', randomKey);
-      console.log('activityVersion', activityVersion);
+      const randomKey = [...Array(10)].map(_ => (Math.random() * 36 | 0).toString(36)).join("");
+      console.log("random Key", randomKey);
+      console.log("activityVersion", activityVersion);
       payload.arguments.execute.inArguments = [
         {
           ActivityVersion: activityVersion,
           Steps: stepConfig,
           config: JSON.stringify(this.state.config),
-          row: '{{Event.DEAudience-7bfc77f1-3223-8e46-78c7-b0daea2bf554._CustomObjectKey}}',
+          row: "{{Event.DEAudience-7bfc77f1-3223-8e46-78c7-b0daea2bf554._CustomObjectKey}}",
           interactionId: interactionId,
           activityKey: randomKey,
           bu: this.state.bu
         }
       ];
-      payload.arguments.execute.outArguments = [
-        { key: '' },
-        { endDate: '' },
-        { journeyKey: '' }
-      ];
+      payload.arguments.execute.outArguments = [{ key: "" }, { endDate: "" }, { journeyKey: "" }];
 
       payload.schema = {
         arguments: {
@@ -250,60 +263,60 @@ class StepManager extends React.Component {
             inArguments: [
               {
                 ActivityVersion: {
-                  dataType: 'Text',
+                  dataType: "Text",
                   isNullable: false,
-                  direction: 'in'
+                  direction: "in"
                 }
               },
               {
                 config: {
-                  dataType: 'Text',
+                  dataType: "Text",
                   isNullable: false,
-                  direction: 'in'
+                  direction: "in"
                 }
               },
               {
                 row: {
-                  dataType: 'Text',
+                  dataType: "Text",
                   isNullable: false,
-                  direction: 'in'
+                  direction: "in"
                 }
               },
               {
                 Steps: {
-                  dataType: 'Array',
+                  dataType: "Array",
                   isNullable: false,
-                  direction: 'in'
+                  direction: "in"
                 }
               },
               {
                 interactionId: {
-                  dataType: 'Text',
+                  dataType: "Text",
                   isNullable: false,
-                  direction: 'in'
+                  direction: "in"
                 }
               },
               {
                 bu: {
-                  dataType: 'Number',
+                  dataType: "Number",
                   isNullable: false,
-                  direction: 'in'
+                  direction: "in"
                 }
               },
               {
                 eventData: {
-                  dataType: 'Number',
+                  dataType: "Number",
                   isNullable: true,
-                  direction: 'in',
+                  direction: "in",
                   readOnly: false,
                   access: "Hidden"
                 }
               },
               {
                 contactKey: {
-                  dataType: 'Number',
+                  dataType: "Number",
                   isNullable: true,
-                  direction: 'in',
+                  direction: "in",
                   readOnly: false,
                   access: "Hidden"
                 }
@@ -312,26 +325,26 @@ class StepManager extends React.Component {
             outArguments: [
               {
                 key: {
-                  dataType: 'Text',
+                  dataType: "Text",
                   isNullable: false,
-                  direction: 'out',
-                  access: 'Visible'
+                  direction: "out",
+                  access: "Visible"
                 }
               },
               {
                 endDate: {
-                  dataType: 'Date',
+                  dataType: "Date",
                   isNullable: false,
-                  direction: 'out',
-                  access: 'Visible'
+                  direction: "out",
+                  access: "Visible"
                 }
               },
               {
                 journeyKey: {
-                  dataType: 'Text',
+                  dataType: "Text",
                   isNullable: false,
-                  direction: 'out',
-                  access: 'Visible'
+                  direction: "out",
+                  access: "Visible"
                 }
               }
             ]
@@ -344,13 +357,13 @@ class StepManager extends React.Component {
             payload.arguments.execute.inArguments[0].activityKey == null
       ) {
         throw Error(
-          'InteractionId or activtiyKey (Random Generated) set to Null. InteractionId: ' +
+          "InteractionId or activtiyKey (Random Generated) set to Null. InteractionId: " +
                     payload.arguments.execute.inArguments[0].interactionId +
-                    ' ActivityKey:' +
+                    " ActivityKey:" +
                     payload.arguments.execute.inArguments[0].activityKey
         );
       } else {
-        console.log('payload', JSON.stringify(payload));
+        console.log("payload", JSON.stringify(payload));
         return payload;
       }
     }
@@ -367,13 +380,12 @@ class StepManager extends React.Component {
           <div className="Activity">{this.showStep(this.state.selectedStep)}</div>
           <div className="ProgressContainer">
             <ProgressIndicator
-              id="example-progress-indicator"
+              id="configSteps"
               completedSteps={this.state.completedSteps}
               disabledSteps={this.state.disabledSteps}
               onStepClick={this.handleStepEvent}
               steps={this.state.steps}
               selectedStep={this.state.selectedStep}
-              // tooltipIsOpenSteps={stepsBasic.slice(0, 2)}
             />
           </div>
         </div>

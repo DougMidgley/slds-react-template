@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import ButtonGroup from "@salesforce/design-system-react/components/button-group";
-import Checkbox from "@salesforce/design-system-react/components/checkbox";
+import Input from '@salesforce/design-system-react/components/input'; 
 import produce from "immer";
 import PropTypes from "prop-types";
 
@@ -46,27 +45,8 @@ class TaskType extends Component {
       <section className="slds-grid slds-p-around_medium slds-grid_vertical-align-center">
         <div className="slds-col slds-text-align_center">
           <div id="taskType">
-            <h1 className="slds-text-title_caps slds-p-vertical_medium">Select Type of Task</h1>
-            <ButtonGroup variant="checkbox">
-              <Checkbox
-                id="Task"
-                label="Task"
-                onChange={this.handleChange}
-                checked={this.props.config.taskType == "Task"}
-              />
-              <Checkbox
-                id="Quiz"
-                label="Quiz"
-                onChange={this.handleChange}
-                checked={this.props.config.taskType == "Quiz"}
-              />
-              <Checkbox
-                id="Survey"
-                label="Survey"
-                onChange={this.handleChange}
-                checked={this.props.config.taskType == "Survey"}
-              />
-            </ButtonGroup>
+            <h1 className="slds-text-title_caps slds-p-vertical_medium">Add some value</h1>
+            <Input id="inputValue" label="Input Value" placeholder="My placeholder" onChange={this.handleChange} value={this.props.config.inputValue}/>
           </div>
         </div>
       </section>

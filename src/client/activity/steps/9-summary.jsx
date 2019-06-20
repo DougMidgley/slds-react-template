@@ -15,8 +15,6 @@ class Summary extends Component {
   constructor(props) {
     super(props);
   }
-    static label = "Confirm Message";
-    static assistiveText = "Message from Content Builder SMS";
     static configured = true;
 
     /**
